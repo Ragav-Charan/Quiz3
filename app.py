@@ -29,5 +29,21 @@ def home():
     return render_template('home.html')
 
 
+@app.route('/records')
+def records():
+    return render_template('records.html')
+
+
+@app.route('/list',methods=['POST', 'GET'])
+def list():
+    cursor = cnxn.cursor()
+    d1 = request.form['d1']
+    d2 = request.form['d2']
+    lon = request.form['lon']
+    cursor.execute("SELECT latitude,longitude,time,depthError FROM quake6 where depthError between ? and ? and longitude > ?",(d1,d2,lon),)
+    row = cursor.fetchall()
+    return render_template("list.html", data1=row)
+
+
 if __name__ == '__main__':
     app.run()
