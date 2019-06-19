@@ -37,6 +37,10 @@ def records():
 def q7():
     return render_template('options.html')
 
+@app.route('/q8')
+def q8():
+    return render_template('options1.html')
+
 
 @app.route('/restrictedlat')
 def restrictedlat():
@@ -99,5 +103,33 @@ def options5():
     elapsed_time = end_time - start_time
     return render_template("list3.html", rows=[rows, elapsed_time])
 
+@app.route('/options6', methods=['POST', 'GET'])
+def options6():
+
+    l1 = float(request.form['l1'])
+    l2 = float(request.form['l2'])
+    rows = []
+    randval = []
+    num = int(request.form['num'])
+    elapsed_time = []
+    for i in range(num):
+        start_time = time.time()
+        val = str(round(random.uniform(l1, l2), 1))
+        cur = cnxn.cursor()
+        c = "select count(*) from quake6 WHERE latitude =" + val
+        if r.get(c):
+            print('Cached')
+            rows.append(r.get(c))
+        else:
+            print('Not Cached')
+            cur.execute("select count(*) from quake6 WHERE depthError =?", (val))
+            get = cur.fetchall();
+            rows.append(get)
+            r.set(c, str(get))
+        end_time = time.time()
+        e_time=end_time - start_time
+        elapsed_time.append(e_time)
+        randval.append(val)
+    return render_template("list3.html", rows=[rows,randval,elapsed_time])
 if __name__ == '__main__':
     app.run()

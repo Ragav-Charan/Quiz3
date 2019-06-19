@@ -1,0 +1,301 @@
+
+Name: Charan Venkatesan
+Last 4 digits ID: 6250
+Computer IP address: 192.168.56.1
+CSE 6331, Cloud Computing					
+
+
+Quiz Q2, 6.00, Summer 2019   (c) DL, UTA, 2019
+
+
+  C&P means cut and paste only those relevant lines from your program(s) into this quiz.
+
+
+ 1.  I understand that I am on my honor during this quiz, I will not collaborate, use 
+     non-allowed sources, and I will not discuss or share this quiz with anyone for the next 
+     12 hours.
+     You MAY: use Google to search, use previous source code, 
+     YOU MAY NOT use:
+     Email, Facebook, Hangouts, IM, chats, Skype or ANY other human connection.
+
+     This is a timed test. Late tests will have points deducted for being late.
+     Very late tests will not be graded.
+
+     When you are complete, with any part, please raise your hand, so we may visually inspect that part.
+
+     The second part of the test, you should electronically submit, you will need to copy and paste 
+     only those lines of code to implement that part of the test, usually a few (two to eight) lines of code. 
+     Place it immediately after the question.
+
+     Submit this Quiz (renamed) with code cut and pasted, ONLY text. DO NOT submit zips, binaries, libraries,
+     or anything other than text.
+
+     When any parts(questions) are complete complete, submit this test, you may make multiple submissions.
+
+     If you have computer, or other, problems, please raise your hand immediately.
+
+     If you understand and agree, please initial here:
+     ______CV___________
+
+ 2. Get files from this same folder.
+   
+ 3. Name your program/submission with your name and last digits of your ID.
+
+ 4. Using the cloud services provider, all functionality possible should be implemented on that provider.
+    (Of course, displaying web pages through a browser and the user interface is "local")
+    The cloud service provider is MS Azure.
+
+ 4+. Please DO NOT "select" all tuples and then "filter" results, that is very inefficient and wastes time, 
+     "select" ONLY those tuples (rows) actually needed (for example with "where x>y" or similar).
+     In order to give as many people the opportunity to demo in the last few minutes, you may only demo ONE Question in the
+     last 5 minutes of the quiz time or for the few minutes afterward. 
+  
+Show and submit code, when each part is complete, raise your hand and then show us:
+
+ 5. Show a web page and interface (which resides on the cloud provider) with your student ID followed by your
+    last name then comma then first name (as it appears on your student ID), in large font at the top of every web page displayed 
+    (for this quiz)
+    Upload the earthquake data ("quakes6") to cloud service, and import into a relational DB (SQL).
+    Then, below your name and ID, through a web interface (page), allow a user to give two depth error values (depth error, last column)  
+    (for example 10.0 and 12.5), and one longitude value (for example 42) and on the web page list each quake ONLY location (lat, long)
+    AND date and depth error within that depth error range with longitude greater than the one given. 
+
+@app.route('/list',methods=['POST', 'GET'])
+def list():
+    cursor = cnxn.cursor()
+    d1 = request.form['d1']
+    d2 = request.form['d2']
+    lon = request.form['lon']
+    cursor.execute("SELECT latitude,longitude,time,depthError FROM quake6 where depthError between ? and ? and longitude > ?",(d1,d2,lon),)
+    row = cursor.fetchall()
+    return render_template("list.html", data1=row)
+
+<!doctype html>
+<html>
+
+   <body>
+   <center>
+      <header> <h1> Records </h1> </header>
+            <header> <h1> 1001626250</h1> </header>
+		<header> <h1> Venkatesan, Charan  </h1> </header>
+      <header> <h1> This page lists the quake records </h1>
+      </header>
+      <br> <br>
+      <table border=1>
+    <thead>
+    <td>latitude</td>
+    <td>longitude</td>
+    <td>time</td>
+    <td>depthError</td>
+    </thead>
+    <tbody>
+    {% for rows in data1 %}
+
+        <tr>
+            <td>{{rows[0]}}</td>
+            <td>{{rows[1]}}</td>
+            <td>{{rows[2]}}</td>
+            <td>{{rows[3]}}</td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+
+      <br>
+      <h2> <a href = "/">Home</a> </h2>
+   </center>
+   </body>
+</html>
+
+<!doctype html>
+<html>
+	<body>
+
+		<center>
+		<header> <h1> Records </h1> </header>
+            <header> <h1> 1001626250</h1> </header>
+		<header> <h1> Venkatesan, Charan  </h1> </header>
+
+            <header> <h1> Quiz 3</h1> </header>
+		<br> <br>
+		<h1> </h1>
+		<br>
+		<label><h2>Display the no of records:</h2></label><br>
+        <form action = "{{ url_for('list') }}" method = "POST">
+		  <label>Enter depth Error 1:</label>
+          <input type = "text"                 
+				 name = "d1"
+                  />
+            <label>Enter depth Error 2:</label>
+          <input type = "text"
+				 name = "d2"
+                  />
+            <label>Enter Longitude:</label>
+            <input type = "text"
+				 name = "lon"
+                  />
+		  <br>
+		  <br>
+				 
+		  <input type = "submit" value = "submit" /><br>	
+		  </form>
+        </center>
+    </body>
+</html>
+
+<!doctype html>
+<html>
+	<body>
+		<center>
+		<header> <h1> Home </h1> </header>
+            <header> <h1> 1001626250</h1> </header>
+		<header> <h1> Venkatesan, Charan  </h1> </header>
+
+            <header> <h1> Quiz 3</h1> </header>
+		<br> <br>
+		<h1> This Webpage consist of Quake records</h1>
+		<br>
+		<h2><a href = "/records">Retrive Database Details with depth error and longitude</a></h2>
+        </center>
+	</body>
+</html>
+
+ 6. Through a web interface (page), allow a user to give you the number of times to do the "query", 
+    you will do the previous step 5 (part 5) that number of times, where the two depth values will be randomly chosen between 
+    those values given, BUT DO NOT use the longitude constraint (don't use that value), 
+    Then you will do that number of queries, each time generating new random value "pairs" within that range. 
+    (For example: the number of times, for instance 38 times, and we give you the range 10.0 and 12.5, you generate 
+    two random values within that range, for example 10.8 and 11.1, then 12.3 and 12.4, repeating 38 times.)
+    Then you will show: 
+    The number of matching tuples (results) EACH time through AND random values generated as well 
+    as the time taken to do EACH "random" query.
+
+@app.route('/options4', methods=['POST', 'GET'])
+def options4():
+
+    l1 = float(request.form['l1'])
+    l2 = float(request.form['l2'])
+    rows = []
+    randval = []
+    num = int(request.form['num'])
+    elapsed_time = []
+    for i in range(num):
+        start_time = time.time()
+        val = str(round(random.uniform(l1, l2), 1))
+        cur = cnxn.cursor()
+        cur.execute("select count(*) from quake6 WHERE depthError =?", (val))
+        get = cur.fetchall();
+        rows.append(get)
+        end_time = time.time()
+        e_time=end_time - start_time
+        elapsed_time.append(e_time)
+        randval.append(val)
+    return render_template("list3.html", rows=[rows,randval,elapsed_time])
+
+<!doctype html>
+<html>
+	<body>
+
+		<center>
+		<header> <h1> Records </h1> </header>
+            <header> <h1> 1001626250</h1> </header>
+		<header> <h1> Venkatesan, Charan  </h1> </header>
+      <header> <h1> This page lists the quake random records </h1>
+		<br> <br>
+		<h1> </h1>
+		<br>
+		<label><h2>Enter the number of queries and :</h2></label><br>
+        <form action = "{{ url_for('options4') }}" method = "POST">
+		<label>Enter Depth error 1:</label>
+         <input type = "text"
+				 name = "l1"
+                  />
+		<label>Enter depth error 2:</label>
+         <input type = "text"
+				 name = "l2"
+                  />
+            <label>Enter num:</label>
+         <input type = "text"
+				 name = "num"
+                  />
+		  <br>
+		  <br>
+		  <input type = "submit" value = "submit" /><br>
+		  </form>
+        </center>
+
+    </body>
+</html>
+
+
+ 7. Repeat part 6, allow a user to either use an in-memory caching mechanism or none, and for ALL queries 
+    show ONLY cumulative time to do ALL queries.
+@app.route('/options5', methods=['POST', 'GET'])
+def options5():
+    start_time = time.time()
+    l1 = float(request.form['l1'])
+    l2 = float(request.form['l2'])
+    rows = []
+    num = int(request.form['num'])
+    for i in range(num):
+        val = str(round(random.uniform(l1, l2), 1))
+        cur = cnxn.cursor()
+        c = "select count(*) from quake6 WHERE latitude =" + val
+        # cur.execute("select * from all_month WHERE place LIKE ?", ('%'+loc+'%',))
+        if r.get(c):
+            print('Cached')
+            rows.append(r.get(c))
+        else:
+            print('Not Cached')
+            cur.execute("select count(*) from quake6 WHERE depthError =?", (val))
+            get = cur.fetchall();
+            rows.append(get)
+            r.set(c, str(get))
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    return render_template("list3.html", rows=[rows, elapsed_time])
+
+<!doctype html>
+<html>
+	<body>
+
+		<center>
+		<header> <h1> Records </h1> </header>
+            <header> <h1> 1001626250</h1> </header>
+		<header> <h1> Venkatesan, Charan  </h1> </header>
+      <header> <h1> This page lists the quake random records </h1>
+		<br> <br>
+		<h1> </h1>
+		<br>
+		<label><h2>Enter the number of queries and :</h2></label><br>
+        <form action = "{{ url_for('options5') }}" method = "POST">
+		<label>Enter Depth error 1:</label>
+         <input type = "text"
+				 name = "l1"
+                  />
+		<label>Enter depth error 2:</label>
+         <input type = "text"
+				 name = "l2"
+                  />
+            <label>Enter num:</label>
+         <input type = "text"
+				 name = "num"
+                  />
+		  <br>
+		  <br>
+		  <input type = "submit" value = "submit" /><br>
+		  </form>
+        </center>
+
+    </body>
+</html>
+
+
+ 8. Repeat part 6 using an in-memory caching mechanism (NOT an in-memory database) repeat the previous step, then show us.
+
+ 9. Show GTA parts 5, 6, 7, 8
+
+ 10. When complete, return (send) this quiz
+     If you finish early, send this immediately, otherwise send between
+     the end of class and no more than 1 minute after that.
