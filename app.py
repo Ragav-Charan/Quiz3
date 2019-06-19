@@ -33,6 +33,14 @@ def home():
 def records():
     return render_template('records.html')
 
+@app.route('/q6')
+def q7():
+    return render_template('options.html')
+
+
+@app.route('/restrictedlat')
+def restrictedlat():
+    return render_template('lat.html')
 
 @app.route('/list',methods=['POST', 'GET'])
 def list():
@@ -44,6 +52,52 @@ def list():
     row = cursor.fetchall()
     return render_template("list.html", data1=row)
 
+@app.route('/options4', methods=['POST', 'GET'])
+def options4():
+
+    l1 = float(request.form['l1'])
+    l2 = float(request.form['l2'])
+    rows = []
+    randval = []
+    num = int(request.form['num'])
+    elapsed_time = []
+    for i in range(num):
+        start_time = time.time()
+        val = str(round(random.uniform(l1, l2), 1))
+        cur = cnxn.cursor()
+        cur.execute("select count(*) from quake6 WHERE depthError =?", (val))
+        get = cur.fetchall();
+        rows.append(get)
+        end_time = time.time()
+        e_time=end_time - start_time
+        elapsed_time.append(e_time)
+        randval.append(val)
+    return render_template("list3.html", rows=[rows,randval,elapsed_time])
+
+@app.route('/options5', methods=['POST', 'GET'])
+def options5():
+    start_time = time.time()
+    l1 = float(request.form['l1'])
+    l2 = float(request.form['l2'])
+    rows = []
+    num = int(request.form['num'])
+    for i in range(num):
+        val = str(round(random.uniform(l1, l2), 1))
+        cur = cnxn.cursor()
+        c = "select count(*) from quake6 WHERE latitude =" + val
+        # cur.execute("select * from all_month WHERE place LIKE ?", ('%'+loc+'%',))
+        if r.get(c):
+            print('Cached')
+            rows.append(r.get(c))
+        else:
+            print('Not Cached')
+            cur.execute("select count(*) from quake6 WHERE depthError =?", (val))
+            get = cur.fetchall();
+            rows.append(get)
+            r.set(c, str(get))
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    return render_template("list3.html", rows=[rows, elapsed_time])
 
 if __name__ == '__main__':
     app.run()
